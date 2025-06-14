@@ -76,6 +76,6 @@ except ValueError as e:
     input_data['type'] = -1
 
 # Prediction
-if st.button("🔍 Predict Rent Price"):
+if st.button("🔍 Predict House Price"):
     prediction = model.predict(input_data[['beds', 'bath', 'area', 'type', 'city', 'location']])
-    st.success(f"Estimated Monthly Rent: {prediction[0]:,.2f} BDT")
+    st.success(f"Estimated House Price: {prediction[0]:,.2f} BDT")
