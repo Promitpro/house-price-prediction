@@ -6,9 +6,15 @@ from sklearn.preprocessing import LabelEncoder
 # Load the original dataset
 @st.cache_data
 def load_dataset():
-    df = pd.read_csv("property_listing_data_in_Bangladesh.csv")
-    df['city'] = df['adress'].astype(str).str.split(',').str[-1].str.strip()
-    df['location'] = df['adress'].astype(str).str.rsplit(',', n=1).str[0].str.strip()
+    df = pd.read_csv("house _price_bd.csv")
+    df['City'] = df['Address'].astype(str).str.split(',').str[-1].str.strip()
+    df['Location'] = df['Address'].astype(str).str.rsplit(',', n=1).str[0].str.strip()
+    return df
+
+def load_dataset():
+    df = pd.read_csv("house _price_bd.csv", encoding='cp1252')  # or try 'ISO-8859-1'
+    df['City'] = df['Address'].astype(str).str.split(',').str[-1].str.strip()
+    df['Location'] = df['Address'].astype(str).str.rsplit(',', n=1).str[0].str.strip()
     return df
 
 df = load_dataset()
@@ -26,14 +32,14 @@ model = load_model()
 st.sidebar.title("Input House Features")
 
 # City
-selected_city = st.sidebar.selectbox("Select City", sorted(df['city'].dropna().unique()))
+selected_city = st.sidebar.selectbox("Select City", sorted(df['City'].dropna().unique()))
 
 # Filter locations by city
-available_locations = df[df['city'] == selected_city]['location'].dropna().unique()
+available_locations = df[df['City'] == selected_city]['Location'].dropna().unique()
 selected_location = st.sidebar.selectbox("Select Location", sorted(available_locations))
 
 # House type
-selected_type = st.sidebar.selectbox("Select Property Type", sorted(df['type'].dropna().unique()))
+selected_type = st.sidebar.selectbox("Select Property Type", sorted(df['Type'].dropna().unique()))
 
 # Numerical Inputs
 beds = st.sidebar.number_input("Number of Bedrooms", min_value=1, value=3)
@@ -47,12 +53,12 @@ st.write("Use the sidebar to input house features and predict the expected price
 
 # Prepare input
 input_data = pd.DataFrame({
-    'beds': [beds],
-    'bath': [bath],
-    'area': [area],
-    'type': [selected_type],
-    'city': [selected_city],
-    'location': [selected_location]
+    'Beds': [beds],
+    'Bath': [bath],
+    'Area': [area],
+    'Type': [selected_type],
+    'City': [selected_city],
+    'Location': [selected_location]
 })
 
 # Label encoding using training data
@@ -60,22 +66,22 @@ label_encoder_city = LabelEncoder()
 label_encoder_location = LabelEncoder()
 label_encoder_type = LabelEncoder()
 
-label_encoder_city.fit(df['city'])
-label_encoder_location.fit(df['location'])
-label_encoder_type.fit(df['type'])
+label_encoder_city.fit(df['City'])
+label_encoder_location.fit(df['Location'])
+label_encoder_type.fit(df['Type'])
 
 # Transform input data
 try:
-    input_data['city'] = label_encoder_city.transform(input_data['city'])
-    input_data['location'] = label_encoder_location.transform(input_data['location'])
-    input_data['type'] = label_encoder_type.transform(input_data['type'])
+    input_data['City'] = label_encoder_city.transform(input_data['City'])
+    input_data['Location'] = label_encoder_location.transform(input_data['Location'])
+    input_data['Type'] = label_encoder_type.transform(input_data['Type'])
 except ValueError as e:
     st.error(f"Encoding error: {e}")
-    input_data['city'] = -1
-    input_data['location'] = -1
-    input_data['type'] = -1
+    input_data['City'] = -1
+    input_data['Location'] = -1
+    input_data['Type'] = -1
 
 # Prediction
-if st.button("🔍 Predict Rent Price"):
-    prediction = model.predict(input_data[['beds', 'bath', 'area', 'type', 'city', 'location']])
-    st.success(f"Estimated Monthly Rent: {prediction[0]:,.2f} BDT")
+if st.button("🔍 Predict House Price"):
+    prediction = model.predict(input_data[['Beds', 'Bath', 'Area', 'Type', 'City', 'Location']])
+    st.success(f"Estimated House Price: {prediction[0]:,.2f} BDT")
