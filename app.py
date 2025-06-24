@@ -6,13 +6,13 @@ from sklearn.preprocessing import LabelEncoder
 # Load the original dataset
 @st.cache_data
 def load_dataset():
-    df = pd.read_csv("house _price_bd.csv")
+    df = pd.read_csv("house_price.csv")
     df['City'] = df['Address'].astype(str).str.split(',').str[-1].str.strip()
     df['Location'] = df['Address'].astype(str).str.rsplit(',', n=1).str[0].str.strip()
     return df
 
 def load_dataset():
-    df = pd.read_csv("house _price_bd.csv", encoding='cp1252')  # or try 'ISO-8859-1'
+    df = pd.read_csv("house_price.csv", encoding='cp1252')  # or try 'ISO-8859-1'
     df['City'] = df['Address'].astype(str).str.split(',').str[-1].str.strip()
     df['Location'] = df['Address'].astype(str).str.rsplit(',', n=1).str[0].str.strip()
     return df
